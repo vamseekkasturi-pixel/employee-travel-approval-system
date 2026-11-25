@@ -1,0 +1,7 @@
+{% macro badge(status) -%}
+  <span class="badge {{ status|lower }}">{{ status }}</span>
+{%- endmacro %}
+
+{% macro money(value) -%}
+  {{ "{:,.2f}".format(value) }}
+{%- endmacro %}

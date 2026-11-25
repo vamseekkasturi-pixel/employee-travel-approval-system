@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, money %}
+{% block title %}Approvals{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Pending Approvals</h1>
+  {% if pending %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Employee</th><th>Destination</th><th>Dates</th><th>Cost</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for r in pending %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.employee_name }}</td>
+        <td>{{ r.destination }}</td>
+        <td>{{ r.start_date }} → {{ r.end_date }}</td>
+        <td>{{ money(r.estimated_cost) }}</td>
+        <td><a class="btn small" href="{{ url_for('request_detail', request_id=r.id) }}">Review</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="empty">No requests are waiting for your approval.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Decision History</h2>
+  {% if history %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Employee</th><th>Destination</th><th>Dates</th><th>Cost</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for r in history %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.employee_name }}</td>
+        <td>{{ r.destination }}</td>
+        <td>{{ r.start_date }} → {{ r.end_date }}</td>
+        <td>{{ money(r.estimated_cost) }}</td>
+        <td>{{ badge(r.status) }}</td>
+        <td><a href="{{ url_for('request_detail', request_id=r.id) }}">View</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="empty">No decisions recorded yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

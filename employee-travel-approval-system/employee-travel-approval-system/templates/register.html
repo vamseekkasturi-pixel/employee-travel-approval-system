@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="card auth-box">
+  <h1>Employee Registration</h1>
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label for="name">Full name</label>
+    <input id="name" name="name" required>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required>
+    <label for="password">Password (min 6 characters)</label>
+    <input id="password" name="password" type="password" minlength="6" required>
+    <label for="department">Department</label>
+    <input id="department" name="department">
+    <label for="manager_id">Reporting manager</label>
+    <select id="manager_id" name="manager_id" required>
+      <option value="">-- choose --</option>
+      {% for m in managers %}
+        <option value="{{ m.id }}">{{ m.name }}{% if m.department %} ({{ m.department }}){% endif %}</option>
+      {% endfor %}
+    </select>
+    <button class="btn" type="submit">Create account</button>
+  </form>
+  <p class="hint">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+</div>
+{% endblock %}

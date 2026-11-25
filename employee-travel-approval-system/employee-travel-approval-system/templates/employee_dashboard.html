@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, money %}
+{% block title %}My Requests{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="header-row">
+    <h1>My Travel Requests</h1>
+    <a class="btn" href="{{ url_for('new_request') }}">+ New Request</a>
+  </div>
+  {% if requests %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Destination</th><th>Dates</th><th>Mode</th><th>Cost</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for r in requests %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.destination }}</td>
+        <td>{{ r.start_date }} → {{ r.end_date }}</td>
+        <td>{{ r.travel_mode }}</td>
+        <td>{{ money(r.estimated_cost) }}</td>
+        <td>{{ badge(r.status) }}</td>
+        <td><a href="{{ url_for('request_detail', request_id=r.id) }}">View</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="empty">You have not submitted any travel requests yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

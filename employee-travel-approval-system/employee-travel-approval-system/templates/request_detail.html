@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, money %}
+{% block title %}Request #{{ req.id }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="header-row">
+    <h1>Travel Request #{{ req.id }}</h1>
+    {{ badge(req.status) }}
+  </div>
+  <dl class="details">
+    <dt>Employee</dt><dd>{{ req.employee_name }} ({{ req.employee_email }})</dd>
+    <dt>Department</dt><dd>{{ req.department or '—' }}</dd>
+    <dt>Destination</dt><dd>{{ req.destination }}</dd>
+    <dt>Purpose</dt><dd>{{ req.purpose }}</dd>
+    <dt>Travel dates</dt><dd>{{ req.start_date }} → {{ req.end_date }}</dd>
+    <dt>Travel mode</dt><dd>{{ req.travel_mode }}</dd>
+    <dt>Estimated cost</dt><dd>{{ money(req.estimated_cost) }}</dd>
+    <dt>Submitted on</dt><dd>{{ req.created_at }}</dd>
+    {% if req.decided_at %}
+      <dt>Decided on</dt><dd>{{ req.decided_at }}{% if req.decided_by_name %} by {{ req.decided_by_name }}{% endif %}</dd>
+    {% endif %}
+    {% if req.manager_comment %}
+      <dt>Manager comment</dt><dd>{{ req.manager_comment }}</dd>
+    {% endif %}
+  </dl>
+</div>
+
+{% if can_decide %}
+<div class="card">
+  <h2>Decision</h2>
+  <form method="post" action="{{ url_for('decide_request', request_id=req.id) }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label for="comment">Comment (required when rejecting)</label>
+    <textarea id="comment" name="comment"></textarea>
+    <div class="actions">
+      <button class="btn green" type="submit" name="action" value="approve">Approve</button>
+      <button class="btn red" type="submit" name="action" value="reject">Reject</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+{% if can_cancel %}
+<form method="post" action="{{ url_for('cancel_request', request_id=req.id) }}"
+      onsubmit="return confirm('Cancel this request?');">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <button class="btn grey" type="submit">Cancel request</button>
+</form>
+{% endif %}
+
+<p><a href="{{ url_for('dashboard') }}">← Back to dashboard</a></p>
+{% endblock %}

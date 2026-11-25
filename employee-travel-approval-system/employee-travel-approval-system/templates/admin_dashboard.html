@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge, money %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="stats">
+  {% for s in statuses %}
+    <div class="stat"><div class="num">{{ counts[s] }}</div><div class="lbl">{{ s }}</div></div>
+  {% endfor %}
+  <div class="stat"><div class="num">{{ money(total_approved) }}</div><div class="lbl">Approved budget</div></div>
+</div>
+
+<div class="card">
+  <h1>All Travel Requests</h1>
+  <p class="filters">
+    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if not status_filter }}">All</a>
+    {% for s in statuses %}
+      <a href="{{ url_for('dashboard', status=s) }}" class="{{ 'active' if status_filter == s }}">{{ s }}</a>
+    {% endfor %}
+  </p>
+  {% if requests %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Employee</th><th>Destination</th><th>Dates</th><th>Cost</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for r in requests %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.employee_name }}</td>
+        <td>{{ r.destination }}</td>
+        <td>{{ r.start_date }} → {{ r.end_date }}</td>
+        <td>{{ money(r.estimated_cost) }}</td>
+        <td>{{ badge(r.status) }}</td>
+        <td><a href="{{ url_for('request_detail', request_id=r.id) }}">View</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="empty">No requests match this filter.</p>
+  {% endif %}
+</div>
+{% endblock %}
